@@ -1,7 +1,7 @@
 [![Release status](https://github.com/ken-morel/comberload/actions/workflows/python-publish.yml/badge.svg)](https://github.com/ken-morel/comberload/releases)
 [![PyPI package](https://badge.fury.io/py/comberload.svg)](https://pypi.org/project/comberload)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/comberload)](https://pypi.org/project/comberload)
-[![Build Status](https://github.com/ken-morel/comberload/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/ken-morel/comberload/tree/mai)
+[![Test](https://github.com/ken-morel/comberload/actions/workflows/test.yml/badge.svg)](https://github.com/ken-morel/comberload/actions/workflows/test.yml)
 [![Coverage Status](https://coveralls.io/repos/github/ken-morel/comberload/badge.svg?branch=main&cache=3000)](https://coveralls.io/github/ken-morel/comberload?branch=main)
 [![Pypi downloads](https://img.shields.io/pypi/dd/comberload)](https://pypi.org/project/comberload)
 [![Pypi downloads](https://img.shields.io/pypi/dw/comberload)](https://pypi.org/project/comberload)
