@@ -30,7 +30,7 @@ class ComberloadModule(ModuleType):
 
     """
 
-    __version__ = "1.0.0"
+    __version__ = "1.0.1"
     worker_running = False
     should_work = True
     backlog = []
@@ -160,7 +160,6 @@ class ComberloadModule(ModuleType):
 
     def _worker(self):
         self.worker_running = True
-        print(self.backlog)
         while len(self.backlog) > 0 and self.should_work:
             modules = self.backlog.pop()
             self.importing = True

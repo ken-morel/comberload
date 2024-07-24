@@ -1,7 +1,7 @@
 def test_comberload():
     import comberload
 
-    assert comberload.__version__ == "1.0.0"
+    assert comberload.__version__ == "1.0.1"
 
     @comberload("sys")
     def foo():
