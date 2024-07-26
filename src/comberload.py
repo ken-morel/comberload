@@ -1,9 +1,11 @@
+import functools
 import sys
-from types import ModuleType
-from typing import Callable
+
 from functools import wraps
 from importlib import import_module
 from threading import Thread
+from types import ModuleType
+from typing import Callable
 
 
 class ComberloadModule(ModuleType):
@@ -30,12 +32,13 @@ class ComberloadModule(ModuleType):
 
     """
 
-    __version__ = "1.0.1"
+    __version__ = "1.0.2"
     worker_running = False
     should_work = True
     backlog = []
     done = []
     comberloaders = []
+    failed = []
     _callbacks: list[Callable] = []
 
     class ComberLoader:
@@ -45,6 +48,7 @@ class ComberloadModule(ModuleType):
         """
 
         _fallback = None
+        _fail = None
 
         def __init__(self, modules: list[str], func: Callable):
             """
@@ -59,6 +63,9 @@ class ComberloadModule(ModuleType):
             )
             if self.comberloaded:
                 self.call = func
+            self.failed = len(set(modules) & set(ComberloadModule.failed)) > 0
+            if self.failed:
+                self.comberloaded = False
             wraps(func)(self)
 
         def call(self, *args, **kw):
@@ -76,6 +83,23 @@ class ComberloadModule(ModuleType):
             incomplete
             """
             self._fallback = func
+            return func
+
+        def fail(self, func: Callable):
+            """
+            decorator registers function as fallback to use when loading
+            incomplete
+            """
+            self._fail = func
+            return func
+
+        def failback(self, func: Callable):
+            """
+            decorator registers function as fallback to use when loading
+            incomplete
+            """
+            self._fail = func
+            self._callback = func
             return func
 
         def __call__(self, *args, **kw):
@@ -168,27 +192,35 @@ class ComberloadModule(ModuleType):
                 module = ".".join(modules[: depth + 1])
                 if module in self.done:
                     continue
-                import_module(module)
-                if module in self.backlog:
-                    self.backlog.remove(module)
-                self.done.append(module)
-                for loader in self.comberloaders:
-                    if loader.comberloaded:
-                        continue
-                    if (
-                        len(
-                            set(self.backlog) & set(loader.modules)
-                        )
-                        == 0
+                try:
+                    import_module(module)
+                except (ModuleNotFoundError, ImportError) as e:
+                    if module in self.backlog:
+                        self.backlog.remove(module)
+                    self.failed.append(module)
+                    for loader in self.comberloaders:
+                        if loader.comberloaded or loader.failed:
+                            continue
+                        if len(set(self.failed) & set(loader.modules)) > 0:
+                            loader.comberloaded = False
+                            loader.failed = True
+                            loader.call = functools.partial(loader._fail, e)
+                else:
+                    if module in self.backlog:
+                        self.backlog.remove(module)
+                    self.done.append(module)
+                    for loader in self.comberloaders:
+                        if loader.comberloaded:
+                            continue
+                        if len(set(self.backlog) & set(loader.modules)) == 0:
+                            loader.comberloaded = True
+                            loader.call = loader.__func__
+                    for idx, (mods, func) in reversed(
+                        tuple(enumerate(self._callbacks[:]))
                     ):
-                        loader.comberloaded = True
-                        loader.call = loader.__func__
-                for idx, (mods, func) in reversed(
-                    tuple(enumerate(self._callbacks[:]))
-                ):
-                    if len(set(self.backlog) & set(mods)) == 0:
-                        self._callbacks.pop(idx)
-                        func()
+                        if len(set(self.backlog) & set(mods)) == 0:
+                            self._callbacks.pop(idx)
+                            func()
             self.importing = False
         self.worker_running = False
 
