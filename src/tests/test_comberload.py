@@ -1,7 +1,7 @@
 def test_comberload():
     import comberload
 
-    assert comberload.__version__ == "1.0.1"
+    assert comberload.__version__ == "1.1.0"
 
     @comberload("sys")
     def foo():
@@ -48,9 +48,24 @@ def test_comberload():
     @comberload("os")
     def foob():
         pass
+    foob()
 
     while comberload.worker_running:
         pass
 
     foob()
+
+    @comberload("os-x")
+    def osx():
+        pass
+
+    @osx.fail
+    def c(e):
+        pass
+    osx()
+
+    @osx.failback
+    def c2(e=None):
+        pass
+    osx()
     comberload.should_exit(True)
