@@ -32,7 +32,7 @@ class ComberloadModule(ModuleType):
 
     """
 
-    __version__ = "1.1.0"
+    __version__ = "1.1.1"
     worker_running = False
     should_work = True
     backlog = []
@@ -73,9 +73,10 @@ class ComberloadModule(ModuleType):
             The default call for comberloaded instance, calla the
             fallback if given, else returns None
             """
-            if self._fallback is None:
+            handle = (self._fallback or self._fallback)
+            if handle is None:
                 return None
-            return self._fallback(*args, **kw)
+            return handle(*args, **kw)
 
         def fallback(self, func: Callable):
             """
