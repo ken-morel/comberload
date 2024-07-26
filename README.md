@@ -15,11 +15,16 @@ and autocompletion from [prompt_toolkit](https://pypi.org/project/prompt_toolkit
 But there was an issue, prompt_toolkit loaded **extremely**, I was wasting alot
 time to load a package which was not indispensable to my app.
 
+Comberloads, since comberload 1.0.2, were added two more methods to comberloader,
+`failback` and `fail`
+
 comberload permits you to register modules for queued loading and callbacks
 if they are not loaded yet, howaworks?
 
 a simple example for a function which uses prompt_toolkit.prompt but can
 fallback to simple input
+
+## fallback
 
 ```python
 import comberload
@@ -65,6 +70,40 @@ def third():
     pass
 ```
 
+## fail
+
+Use this handler in case the module fails to import
+
+```python
+import comberload
+
+
+comberload("mod1", "mod2")
+def first():
+    pass
+
+@first.fail
+def second(e):
+    pass
+```
+
+## failback
+
+This is what I advice to use, it uses the default handler in case the module is
+not loaded due to error or any else.
+
+```python
+import comberload
+
+
+comberload("mod1", "mod2")
+def first():
+    pass
+
+@first.failback
+def second(e=None):  # e will be passed if module fails to load
+    pass
+```
 # callbacks
 
 comberload also permits you to register callbacks when some modules finish loading
