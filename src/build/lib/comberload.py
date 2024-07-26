@@ -73,10 +73,9 @@ class ComberloadModule(ModuleType):
             The default call for comberloaded instance, calla the
             fallback if given, else returns None
             """
-            handle = (self._fallback or self._failback)
-            if handle is None:
+            if self._fallback is None:
                 return None
-            return handle(*args, **kw)
+            return self._fallback(*args, **kw)
 
         def fallback(self, func: Callable):
             """
@@ -100,7 +99,7 @@ class ComberloadModule(ModuleType):
             incomplete
             """
             self._fail = func
-            self._callback = func
+            self._fallback = func
             return func
 
         def __call__(self, *args, **kw):
