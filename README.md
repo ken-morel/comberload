@@ -83,8 +83,8 @@ def first():
     pass
 
 @first.fail
-def second(e):
-    pass
+def second():
+    print(first.error)
 ```
 
 ## failback
@@ -101,7 +101,7 @@ def first():
     pass
 
 @first.failback
-def second(e=None):  # e will be passed if module fails to load
+def second():
     pass
 ```
 # callbacks

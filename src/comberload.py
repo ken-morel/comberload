@@ -204,7 +204,8 @@ class ComberloadModule(ModuleType):
                         if len(set(self.failed) & set(loader.modules)) > 0:
                             loader.comberloaded = False
                             loader.failed = True
-                            loader.call = functools.partial(loader._fail, e)
+                            loader.call = loader._fail
+                            loader.error = e
                 else:
                     if module in self.backlog:
                         self.backlog.remove(module)
