@@ -1,4 +1,3 @@
-import functools
 import sys
 
 from functools import wraps
@@ -32,7 +31,7 @@ class ComberloadModule(ModuleType):
 
     """
 
-    __version__ = "1.1.1"
+    __version__ = "1.1.2"
     worker_running = False
     should_work = True
     backlog = []
@@ -68,14 +67,14 @@ class ComberloadModule(ModuleType):
                 self.comberloaded = False
             wraps(func)(self)
 
-        def call(self, *args, **kw):
+        def call(__comberloaded_special__self, *args, **kw):
             """
             The default call for comberloaded instance, calla the
             fallback if given, else returns None
             """
-            if self._fallback is None:
+            if __comberloaded_special__self._fallback is None:
                 return None
-            return self._fallback(*args, **kw)
+            return __comberloaded_special__self._fallback(*args, **kw)
 
         def fallback(self, func: Callable):
             """
