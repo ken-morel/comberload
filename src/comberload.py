@@ -31,7 +31,7 @@ class ComberloadModule(ModuleType):
 
     """
 
-    __version__ = "1.1.2"
+    __version__ = "1.1.3"
     worker_running = False
     should_work = True
     backlog = []
