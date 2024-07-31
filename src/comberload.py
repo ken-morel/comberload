@@ -101,14 +101,16 @@ class ComberloadModule(ModuleType):
             self._fallback = func
             return func
 
-        def __call__(self, *args, **kw):
+        def __call__(__comberloaded_special__self, *args, **kw):
             """
             calls callback or function depending on if loading complete
             """
-            if hasattr(self, "__self__"):
-                return self.call(self.__self__, *args, **kw)
+            if hasattr(__comberloaded_special__self, "__self__"):
+                return __comberloaded_special__self.call(
+                    __comberloaded_special__self.__self__, *args, **kw
+                )
             else:
-                return self.call(*args, **kw)
+                return __comberloaded_special__self.call(*args, **kw)
 
         def __get__(self, instance, *__, **_):
             """
